@@ -1,0 +1,90 @@
+name: Container Build
+
+on:
+  push:
+    tags: [ 'v*.*.*' ]
+
+env:
+  OTC_REGISTRY: swr.eu-de.otc.t-systems.com
+  OTC_REPO_SYNC: counter
+  OTC_REPO_ASYNC: async
+  REPO_NAME: ${{ github.repository }}
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log into registry  ${{ env.OTC_REGISTRY }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.OTC_REGISTRY }}
+          username: ${{ secrets.OTC_USER }}
+          password: ${{ secrets.OTC_PASS }}
+
+      - name: Extract some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "branch=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Build CounteR docker image
+        id: build-and-push-CounteR
+        uses: docker/build-push-action@v5
+        with:
+          context: CounteR/
+          load: true
+          tags: |
+            ${{ env.OTC_REGISTRY }}/counter/${{ env.OTC_REPO_SYNC}}:${{ steps.vars.outputs.branch }}
+            ${{ env.OTC_REGISTRY }}/counter/${{ env.OTC_REPO_SYNC}}:${{ steps.vars.outputs.sha_short }}
+
+      - name: Build Async docker image
+        id: build-and-push-async
+        uses: docker/build-push-action@v5
+        with:
+          context: Async/
+          load: true
+          tags: |
+            ${{ env.OTC_REGISTRY }}/counter/${{ env.OTC_REPO_ASYNC}}:${{ steps.vars.outputs.branch }}
+            ${{ env.OTC_REGISTRY }}/counter/${{ env.OTC_REPO_ASYNC}}:${{ steps.vars.outputs.sha_short }}
+        
+      - name: Push CounteR docker image
+        run: /usr/bin/docker push ${{ env.OTC_REGISTRY }}/counter/${{ env.OTC_REPO_SYNC}}:${{ steps.vars.outputs.branch }}
+      
+      - name: Push Async docker image
+        run: /usr/bin/docker push ${{ env.OTC_REGISTRY }}/counter/${{ env.OTC_REPO_ASYNC}}:${{ steps.vars.outputs.branch }}      
+
+      - name: Run Trivy vulnerability scanner (image) (counter)
+        uses: aquasecurity/trivy-action@0.14.0
+        with:
+          image-ref: ${{ env.OTC_REGISTRY }}/counter/${{ env.OTC_REPO_SYNC }}:${{ steps.vars.outputs.sha_short }}
+          vuln-type: 'os,library'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+        env:  
+          TRIVY_USERNAME: ${{ secrets.OTC_USER }}
+          TRIVY_PASSWORD: ${{ secrets.OTC_PASS }} 
+
+      - name: Run Trivy vulnerability scanner (image) (async)
+        uses: aquasecurity/trivy-action@0.14.0
+        with:
+          image-ref: ${{ env.OTC_REGISTRY }}/counter/${{ env.OTC_REPO_ASYNC }}:${{ steps.vars.outputs.sha_short }}
+          vuln-type: 'os,library'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+        env:  
+          TRIVY_USERNAME: ${{ secrets.OTC_USER }}
+          TRIVY_PASSWORD: ${{ secrets.OTC_PASS }}     

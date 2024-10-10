@@ -1,0 +1,10 @@
+Flask==2.0.2
+flask-restx==0.5.1
+celery==5.2.3
+Flask-Cors==3.0.10
+requests==2.7.0
+Redis==4.1.2
+flower==1.0.0
+pyOpenSSL==19.0.0
+pywebhdfs==0.4.1
+Werkzeug<=2.1.2

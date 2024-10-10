@@ -1,0 +1,54 @@
+localzippath: counter/
+webhdfs:
+    host: 172.22.0.2 # change here with docker port
+    port: 9870
+    user: admin
+    restapi: webhdfs/v1/
+    basepath: tmp/counter/
+twitter:
+    access_token:
+    access_token_secret:
+    bearer_token:
+    api_key:
+    api_key_sec:
+    #types [developer, academic, premium, enterprise]
+    account_type:
+    # for types [ academic, premium]
+    username:
+    # for types [enterprise]
+    password:
+    # for types [premium]
+    label:
+    timeout: 1000
+    max_video_size_mb: 10
+youtube:
+    youtube_api_key:
+    maxResults: 50
+    maxCaptions: 10
+    maxRequests: 5
+    maxVideos: 10
+    maxComments: 10
+    maxPlaylist: 5
+telegram:
+    api_id:
+    api_hash:
+    phone:
+    username:
+    password:
+    maxResults: 10
+    maxMediaResults: 5
+    maxMediaSize: 10000000
+sentry: ""
+instagram:
+    connector_url:
+    maxResults: 50
+twitch:
+    server: irc.chat.twitch.tv
+    port: 6667
+    nickname:
+    password:
+    client_id:
+    client_secret:
+    oauthtoken:
+darkweb:
+    maxResults: 10

@@ -1,0 +1,23 @@
+# syntax=docker/dockerfile:1
+FROM python:3.9-slim-bullseye
+LABEL org.opencontainers.image.source="https://github.com/SESARLab/CounterAsync"
+WORKDIR /app
+RUN apt-get install ca-certificates
+RUN update-ca-certificates
+COPY requirements.txt requirements.txt
+RUN pip install --upgrade pip
+RUN pip3 install -r requirements.txt
+
+COPY . .
+
+CMD [ "python3", "socialConnectorSwagger.py"]
+
+
+
+
+
+
+
+
+
+

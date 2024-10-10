@@ -1,0 +1,58 @@
+version: "3.3"
+services:
+
+  api:
+    environment:
+      - ENVIRONMENT=staging
+    build: CounteR/
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./CounteR/counter:/app/counter
+    depends_on:
+      - worker
+      - flower
+
+  web:
+    build: Async/
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./Async/templates:/app/templates
+      - ./Async/static:/app/static
+    depends_on:
+      - worker
+      - flower
+    environment:
+      - FLOWER_HOST=flower
+      - FLOWER_PORT=7000
+      - HDFS_HOST=172.20.28.210
+      - HDFS_PORT=9870
+      - HDFS_USERNAME=admin
+
+  worker:
+    build: Async/
+    command: "celery -A worker worker --loglevel=INFO -E "
+    environment:
+      - API_URL=http://api:8000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+
+  flower:
+    build: Async/
+    command: "celery -A worker flower"
+    environment:
+      - FLOWER_PORT=7000
+    ports:
+      - "7000:7000"
+    depends_on:
+      - redis
+#  instagram:
+#    build: WP3-instagram-collector/
+#    ports:
+#      - 8069:8069
+
+  redis:
+    image: "redis:alpine"

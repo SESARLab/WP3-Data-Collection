@@ -1,0 +1,56 @@
+{% extends "_base.html" %} {% block content %}
+
+<div class="starter-template">
+  <h1>Acquisition Campaign</h1>
+  <hr />
+  <br />
+  <div>
+    <h3>Campaigns</h3>
+    <p>Pick a social network</p>
+    <div class="input-group mb-2">
+      {# <span class="input-group-text btn-primary" id="inputGroup-sizing-default">Search</span> #}
+      <input type="text" id="search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="profile/EU_Commission" />
+    </div>
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <button type="button" class="btn btn-primary" onclick="val = document.getElementById('search').value; handleClick(1,val,'twitter')">Twitter</button>
+      <button type="button" class="btn btn-primary" onclick="val = document.getElementById('search').value; handleClick(2,val,'telegram')">Telegram</button>
+      <button type="button" class="btn btn-primary" onclick="val = document.getElementById('search').value; handleClick(3,val,'youtube')">Youtube</button>
+      <button type="button" class="btn btn-primary" onclick="val = document.getElementById('search').value; handleClick(4,val,'twitch')">Twitch</button>
+
+      {# <button type="button" class="btn btn-primary" onclick="val = document.getElementById('search').value; handleClick(4,val,'instagram')">Instagram</button> #}
+
+    </div>
+
+    <h3 class="mt-4">Campaigns Management</h3>
+    <div class="input-group mb-2">
+      <input type="text" id="campaign" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="" placeholder="Click on a campaing id" />
+    </div>
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <button type="button" class="btn btn-primary" onclick="val = document.getElementById('campaign').value; handleCampaign(2,val,'status')">Status</button>
+      <button type="button" class="btn btn-primary" onclick="val = document.getElementById('campaign').value; handleCampaign(1,val,'restart')">Restart</button>
+      <button type="button" class="btn btn-primary" onclick="val = document.getElementById('campaign').value; handleCampaign(2,val,'stop')">Stop</button>
+    </div>
+
+    <pre id="campaign_result">handleCampaign</pre>
+  </div>
+  <br /><br />
+  <div>
+    <h3>Campaign Status</h3>
+    <br />
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Result</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="tasks">
+        <tr></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
